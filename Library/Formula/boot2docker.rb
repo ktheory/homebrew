@@ -11,4 +11,26 @@ class Boot2docker < Formula
   def install
     bin.install "boot2docker"
   end
+
+  def caveats; <<-EOS.undent
+    Installing boot2docker virtual machine:
+      boot2docker init
+      boot2docker up
+
+    Upgrading:
+      boot2docker stop
+      boot2docker download
+      boot2docker up
+
+
+    Forwarding ports from the vm to localhost:
+
+      boot2docker stop
+      for i in {49000..49900}; do
+        VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port$i,tcp,,$i,,$i";
+        VBoxManage modifyvm "boot2docker-vm" --natpf1 "udp-port$i,udp,,$i,,$i";
+      done
+      boot2docker up
+    EOS
+  end
 end
